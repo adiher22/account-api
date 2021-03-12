@@ -38,7 +38,7 @@ class TransactionController extends Controller
         $validator =   Validator::make($request->all(),[
             'title' => ['required'],
             'amount' => ['required', 'numeric'],
-            'type' => ['required in:expense,revenue']
+            'type' => ['required', 'in:expense,revenue']
         ]);
 
         if($validator->fails()){
@@ -72,7 +72,14 @@ class TransactionController extends Controller
      */
     public function show($id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+
+        $response = [
+            'message' => 'Transaction Detail',
+            'data' => $transaction
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
     }
 
     /**
@@ -101,7 +108,7 @@ class TransactionController extends Controller
         $validator =   Validator::make($request->all(),[
             'title' => ['required'],
             'amount' => ['required', 'numeric'],
-            'type' => ['required in:expense,revenue']
+            'type' => ['required', 'in:expense,revenue']
         ]);
 
         if($validator->fails()){
@@ -110,7 +117,7 @@ class TransactionController extends Controller
         }
 
         try {
-           $transaction = Transaction::update($request->all());
+           $transaction->update($request->all());
            $response = [
                'message' => 'Transaction Updated',
                'data' => $transaction
@@ -135,6 +142,23 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+    
+        try {
+           $transaction->delete($id);
+           $response = [
+               'message' => 'Transaction Deleted',
+               'data' => $transaction
+           ];
+
+           return response()->json($response, Response::HTTP_OK);
+
+
+        } catch (QueryException $e) {
+            
+                return response()->json([
+                    'message' => "Failed " . $e->errorInfo
+                ]);
+        }
     }
 }
