@@ -28,3 +28,5 @@ Route::put('/transaction/{id}', [TransactionController::class, 'update']);
 Route::get('/transaction/{id}', [TransactionController::class, 'show']);
 
 Route::delete('/transaction/{id}', [TransactionController::class, 'destroy']);
+
+Route::resource('/transaction', TransactionController::class)->except(['create','edit']);
